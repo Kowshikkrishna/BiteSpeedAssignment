@@ -5,7 +5,8 @@ plugins {
 }
 
 group = 'com.bitespeed'
-version = '0.0.1-SNAPSHOT'
+version = '0.1'
+archivesBaseName = 'contact'
 
 java {
 	sourceCompatibility = '17'
