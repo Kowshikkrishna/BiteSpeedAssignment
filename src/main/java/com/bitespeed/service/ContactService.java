@@ -39,7 +39,7 @@ public class ContactService {
             case 1 -> response.setContactResponse(
                     createContact(request, primaryContactList.get(0).getId().intValue(), contactList)
             );
-            case 2 -> response.setContactResponse(convertSecondaryToPrimary(contactList));
+            case 2 -> response.setContactResponse(convertSecondaryToPrimary(primaryContactList , contactList));
         }
         return response;
     }
@@ -88,15 +88,20 @@ public class ContactService {
                 .build();
     }
 
-    ContactResponse convertSecondaryToPrimary(List<Contact> contactList) {
-        Integer secondaryContactIndex =
-                contactList.get(0)
+    ContactResponse convertSecondaryToPrimary(List<Contact> primaryContactList , List<Contact> contactList) {
+        int secondaryContactIndex =
+                primaryContactList.get(0)
                         .getCreatedAt()
-                        .before(contactList.get(0).getCreatedAt()) ? 0 : 1;
-        contactRepository.updateLinkedPrecedence(contactList.get(secondaryContactIndex).getId());
-        contactList.get(secondaryContactIndex).setLinkedPrecedence(LinkedPrecedence.SECONDARY);
+                        .before(primaryContactList.get(1).getCreatedAt()) ? 0 : 1;
+        int primaryContactIndex = secondaryContactIndex ^ 1 ;
+        contactRepository
+                .updateLinkedPrecedenceLikedID(
+                        primaryContactList.get(primaryContactIndex).getId(),
+                        primaryContactList.get(secondaryContactIndex).getId()
+                );
+        primaryContactList.get(secondaryContactIndex).setLinkedPrecedence(LinkedPrecedence.SECONDARY);
         return convertContactToContactResponse(
-                contactList , contactList.get(secondaryContactIndex ^ 1).getId().intValue()
+                contactList , primaryContactList.get(primaryContactIndex).getId().intValue()
         );
     }
 

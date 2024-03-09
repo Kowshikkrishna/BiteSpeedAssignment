@@ -17,7 +17,7 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
 
     @Transactional
     @Modifying
-    @Query(value = "update contact set linked_precedence = 1 where id = ?1", nativeQuery = true)
-    void updateLinkedPrecedence(Long id);
+    @Query(value = "update contact set linked_precedence = 1 , linked_id = ?1 where id = ?2 ", nativeQuery = true)
+    void updateLinkedPrecedenceLikedID(Long primaryIndexId , Long secondaryIndexId);
 
 }
